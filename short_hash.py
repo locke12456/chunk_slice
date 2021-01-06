@@ -1,9 +1,10 @@
-import sys
+import sys, os
 import getopt
 import hashlib
 import json
 
 def save_info(file_info, outputfile):
+
     with open(outputfile, 'w') as outfile:
         json.dump(file_info, outfile)
     #json_file = open(outputfile, "w+")
@@ -27,6 +28,7 @@ def main(argv):
         elif opt in ("-i", "--ifile"):
             inputfile = arg
         elif opt in ("-o", "--ofile"):
+            os.mkdir("{inputfile}_out".format(inputfile=inputfile), 755)
             outputfile = arg
         elif opt in ("-s", "--size"):
             chunk_size = int(arg)
@@ -39,13 +41,18 @@ def main(argv):
         hash = hashlib.sha1(byte).hexdigest()
         size = len(byte)
         total += size
-        data = {'id':count, 'sha1':hash[:10], 'size':size}
+        name = hash
+        data = {'id':count, 'sha1':name, 'size':size}
         chunk_info.append(data)
+        filename = "{inputfile}_out/{name}".format(inputfile=inputfile, name=name)
+        with open(filename, "wb") as writer:
+            writer.write(byte)
         byte = file.read(chunk_size)
         count = count + 1
 
     file_info = {'filename':inputfile, 'size': total,'chunk_size':chunk_size, 'chunks': chunk_info }
     if outputfile != '':
+        outputfile = "{inputfile}_out/{name}".format(inputfile=inputfile, name=outputfile)
         save_info(file_info, outputfile)
     else:
         print(json.dumps(file_info))
