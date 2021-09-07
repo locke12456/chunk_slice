@@ -35,6 +35,7 @@ def main(argv):
     file = open(inputfile, "rb")
     total = 0
     count = 0
+    hash = ""
     byte = file.read(chunk_size)
     chunk_info = []
     while byte:
@@ -49,14 +50,16 @@ def main(argv):
             writer.write(byte)
         byte = file.read(chunk_size)
         count = count + 1
-
-    file_info = {'filename':inputfile, 'size': total,'chunk_size':chunk_size, 'chunks': chunk_info }
+    file.close()
+    with open(inputfile, "rb") as file:
+        byte = file.read(total)
+        hash = hashlib.sha1(byte).hexdigest()
+    file_info = {'filename':inputfile,'sha1': hash, 'size': total,'chunk_size':chunk_size, 'chunks': chunk_info }
     if outputfile != '':
         outputfile = "{inputfile}_out/{name}".format(inputfile=inputfile, name=outputfile)
         save_info(file_info, outputfile)
     else:
         print(json.dumps(file_info))
-    file.close()
 
 
 if __name__ == "__main__":
