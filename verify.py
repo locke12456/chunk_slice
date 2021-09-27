@@ -4,7 +4,7 @@ import getopt
 import hashlib
 import json
 
-def verify_chunk(count, verify_data, verify_failed, verify_info, writer):
+def verify_chunk(count, verify_data, verify_failed, verify_info, total, writer):
     file = open(verify_info[count]["sha1"], "rb")
     max_size = verify_info[count]["size"]
     byte = file.read(max_size)
@@ -51,7 +51,7 @@ def main(argv):
             for count in range(0, len(verify_info)):
                 verify_data = verify_info[count]
                 if os.path.exists(verify_info[count]["sha1"]):
-                    total, verify_failed = verify_chunk(count, verify_data, verify_failed, verify_info, writer)
+                    total, verify_failed = verify_chunk(count, verify_data, verify_failed, verify_info, total, writer)
                 else:
                     print("chunk [%d:%d] %s not exist." % (verify_data["id"], count, verify_data["sha1"]))
                     #break
