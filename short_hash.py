@@ -51,6 +51,7 @@ def save_file_info(chunk_info, chunk_size, hash, inputfile, outputfile, total):
         save_info(file_info, filename)
     else:
         print(json.dumps(file_info))
+    return dirpath
 
 def parse_options(argv, inputfile):
     try:

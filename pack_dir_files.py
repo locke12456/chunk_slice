@@ -33,7 +33,8 @@ def main(argv):
             chunk_info = []
             byte, count, hash, total = short_hash.slice(byte, chunk_info, chunk_size, count, file, inputfile)
             file.close()
-            short_hash.save_file_info(chunk_info, chunk_size, hash, inputfile, outputfile, total)
+            dir = short_hash.save_file_info(chunk_info, chunk_size, hash, inputfile, outputfile, total)
+            utils.ExecProgram(files.fileserver, ["sender", "9" ,"9999", dir])
         time.sleep(1)
         files.Update()
 
