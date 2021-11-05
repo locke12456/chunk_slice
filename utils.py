@@ -36,19 +36,21 @@ def ExecProgram(program, args):
 
 class ListDir(object):
     """description of class"""
-    def __init__(self, path):
+    def __init__(self, path, ext = None):
         self.fileserver = "udp_fileserver"
         self.files = {}
+        self.ext = '/*'
+        if ext != None:
+            self.ext = ext
         self.dir_name = os.path.abspath(path)
         self.Update()
             #print(timestamp_str, ' -->', file_path)  
         #return self.files
     def Update(self):
         self.new_files = []
-        
         # Get list of all files only in the given directory
         list_of_files = filter( os.path.isfile,
-                                glob.glob(self.dir_name + '/*') )
+                                glob.glob(self.dir_name + self.ext) )
         # Sort list of files based on last modification time in ascending order
         #list_of_files = sorted( list_of_files,
         #                        key = os.path.getmtime)
