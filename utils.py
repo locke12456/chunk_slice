@@ -134,6 +134,7 @@ def DecompressFiles(filename, dirPath):
 
 def VerifyChunks(path, remove = False):
     cwd = os.getcwd()
+    result = False
     if path != '':
         jsonList = ListDir(path, "/*.json")
         if jsonList != None:
@@ -174,11 +175,12 @@ def VerifyChunks(path, remove = False):
                 hash = hashlib.sha1(byte).hexdigest()
                 print("file [%s] total size: %d == verify size: %d" % (filename, total, max_size))
                 print("file [%s] sha1: %s, origin sha1: %s" % (filename, hash, data["sha1"]))
+                result = True
                 if remove == True:
                     for count in range(0, len(verify_info)):
                         os.remove(verify_info[count]["sha1"])
                 #json_file.close()
-
+    return result
 class ListDir(object):
     """description of class"""
     def __init__(self, path, ext = None):
