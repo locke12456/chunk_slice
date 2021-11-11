@@ -5,7 +5,7 @@ import subprocess
 import compress
 import json
 import hashlib
-
+from pathlib import Path
 def verifyChunk(count, verify_data, verify_failed, verify_info, total, writer):
     file = open(verify_info[count]["sha1"], "rb")
     max_size = verify_info[count]["size"]
@@ -37,7 +37,8 @@ def saveSliceFileInfo(chunk_info, chunk_size, hash, inputfile, outputfile, total
     filename = os.path.basename(inputfile)
     file_info = {'filename':filename,'sha1': hash, 'size': total,'chunk_size':chunk_size, 'chunks': chunk_info }
     if outputfile != '':
-        filename = "{dirpath}\{name}".format(dirpath=dirpath, name=outputfile)
+        data_folder = Path(dirpath)
+        filename = data_folder / outputfile
         save_info(file_info, filename)
     else:
         print(json.dumps(file_info))
@@ -62,7 +63,8 @@ def slice(byte, chunk_info, chunk_size, count, file, inputfile):
         name = hash
         data = {'id':count, 'sha1':name, 'size':size}
         chunk_info.append(data)
-        filename = "{dirpath}\{name}".format(dirpath=dirpath, name=name)
+        data_folder = Path(dirpath)
+        filename = data_folder / name
         with open(filename, "wb") as writer:
             writer.write(byte)
         byte = file.read(chunk_size)
