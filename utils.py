@@ -145,7 +145,6 @@ def VerifyChunks(path, remove = False):
         else:
             json_list = [path]
     for file in json_list:
-        os.chdir(cwd)
         with open(file) as json_file:
             data = json.load(json_file)
             filename = "{name}".format(name=data["filename"])
@@ -180,6 +179,7 @@ def VerifyChunks(path, remove = False):
                     for count in range(0, len(verify_info)):
                         os.remove(verify_info[count]["sha1"])
                 #json_file.close()
+        os.chdir(cwd)
     return result
 class ListDir(object):
     """description of class"""
