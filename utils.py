@@ -69,7 +69,7 @@ def slice(byte, chunk_info, chunk_size, count, file, inputfile):
             writer.write(byte)
         byte = file.read(chunk_size)
         count = count + 1
-    return byte, count, hash, total
+    return byte, count, hash, total, dirpath
 
 def SliceFile(chunk_size, inputfile, outputfile):
     file = open(inputfile, "rb")
@@ -78,9 +78,10 @@ def SliceFile(chunk_size, inputfile, outputfile):
     hash = ""
     byte = file.read(chunk_size)
     chunk_info = []
-    byte, count, hash, total = slice(byte, chunk_info, chunk_size, count, file, inputfile)
+    byte, count, hash, total, dir = slice(byte, chunk_info, chunk_size, count, file, inputfile)
     file.close()
     saveSliceFileInfo(chunk_info, chunk_size, hash, inputfile, outputfile, total)
+    return dir
 
 def FindProgram(program):
     process = subprocess. run(
@@ -122,11 +123,13 @@ def ExecParallelProgram(program, args, log = None):
 
 def CompressFiles(dirPath, filename):
     files = ListDir(dirPath)
-    comp = compress.Compress("{name}.tar.gz".format(name=filename))
+    zipName = "{name}.tar.gz".format(name=filename)
+    comp = compress.Compress(zipName)
     #comp.Add(dirPath,filename)
     for file in files.GetNewFiles():
         comp.Add(file["path"], file["name"])
     comp.Close()
+    return zipName
 
 def DecompressFiles(filename, dirPath):
     comp = compress.Compress("{name}.tar.gz".format(name=filename))
@@ -162,8 +165,6 @@ def VerifyChunks(path, remove = False):
                     else:
                         print("chunk [%d:%d] %s not exist." % (verify_data["id"], count, verify_data["sha1"]))
                         #break
-    
-    
             max_size = data["size"]
             if total != max_size:
                 print("file [%s] total size: %d != verify size: %d" % (filename, total, max_size))
